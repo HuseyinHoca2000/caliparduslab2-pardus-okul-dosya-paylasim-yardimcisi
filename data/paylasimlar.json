@@ -1,0 +1,22 @@
+[
+  {
+    "ad": "Öğretmen Paylaşım Alanı",
+    "yol": "smb://okul-sunucusu/ogretmenler",
+    "aciklama": "Öğretmenlerin ders materyali ve ortak belgeleri paylaşması için kullanılır."
+  },
+  {
+    "ad": "Öğrenci Paylaşım Alanı",
+    "yol": "smb://okul-sunucusu/ogrenciler",
+    "aciklama": "Öğrencilerin kendi çalışma dosyalarına ulaşması için kullanılır."
+  },
+  {
+    "ad": "Ortak Ders Materyalleri",
+    "yol": "smb://okul-sunucusu/ders_materyalleri",
+    "aciklama": "Tüm öğrenciler ve öğretmenler için ortak ders kaynakları alanıdır."
+  },
+  {
+    "ad": "Bilişim Laboratuvarı Paylaşımı",
+    "yol": "smb://okul-sunucusu/bilisim_lab",
+    "aciklama": "Bilişim dersleri için örnek kodlar, uygulamalar ve dokümanlar alanıdır."
+  }
+]
