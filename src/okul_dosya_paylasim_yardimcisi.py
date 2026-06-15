@@ -4,34 +4,25 @@
 """
 Pardus Okul Dosya Paylaşım Yardımcısı
 ÇalıPardusLab2 / Pardus Hata Yakalama ve Öneri Yarışması 2026
-
-Bu ilk prototip, okul içi dosya paylaşım alanlarına erişim fikrini
-sade bir menü üzerinden göstermektedir.
-Gerçek ağ bağlantısı kurmaz; bilgilendirme ve simülasyon çıktıları üretir.
 """
 
-PAYLASIM_ALANLARI = {
-    "1": {
-        "ad": "Öğretmen Paylaşım Alanı",
-        "yol": "smb://okul-sunucusu/ogretmenler",
-        "aciklama": "Öğretmenlerin ders materyali ve ortak belgeleri paylaşması için kullanılır."
-    },
-    "2": {
-        "ad": "Öğrenci Paylaşım Alanı",
-        "yol": "smb://okul-sunucusu/ogrenciler",
-        "aciklama": "Öğrencilerin kendi çalışma dosyalarına ulaşması için kullanılır."
-    },
-    "3": {
-        "ad": "Ortak Ders Materyalleri",
-        "yol": "smb://okul-sunucusu/ders_materyalleri",
-        "aciklama": "Tüm öğrenciler ve öğretmenler için ortak ders kaynakları alanıdır."
-    },
-    "4": {
-        "ad": "Bilişim Laboratuvarı Paylaşımı",
-        "yol": "smb://okul-sunucusu/bilisim_lab",
-        "aciklama": "Bilişim dersleri için örnek kodlar, uygulamalar ve dokümanlar alanıdır."
-    }
-}
+import json
+from pathlib import Path
+
+
+VERI_DOSYASI = Path("data/paylasimlar.json")
+
+
+def paylasimlari_yukle():
+    try:
+        with open(VERI_DOSYASI, "r", encoding="utf-8") as dosya:
+            return json.load(dosya)
+    except FileNotFoundError:
+        print("Hata: data/paylasimlar.json dosyası bulunamadı.")
+        return []
+    except json.JSONDecodeError:
+        print("Hata: JSON dosyası okunamadı. Yazım hatası olabilir.")
+        return []
 
 
 def baslik_yaz() -> None:
@@ -41,51 +32,65 @@ def baslik_yaz() -> None:
     print("Okul ağı dosya paylaşım alanları için yardımcı prototip\n")
 
 
-def menu_goster() -> None:
+def menu_goster(paylasimlar) -> None:
     print("Lütfen erişmek istediğiniz paylaşım alanını seçin:")
-    for kod, bilgi in PAYLASIM_ALANLARI.items():
-        print(f"{kod} - {bilgi['ad']}")
-    print("5 - Tüm paylaşım alanlarını göster")
-    print("6 - Çıkış")
+
+    for sira, bilgi in enumerate(paylasimlar, start=1):
+        print(f"{sira} - {bilgi['ad']}")
+
+    print(f"{len(paylasimlar) + 1} - Tüm paylaşım alanlarını göster")
+    print(f"{len(paylasimlar) + 2} - Çıkış")
     print()
 
 
-def paylasim_bilgisi_goster(secim: str) -> None:
-    bilgi = PAYLASIM_ALANLARI.get(secim)
-
-    if not bilgi:
-        print("\nGeçersiz paylaşım alanı seçimi.\n")
-        return
-
+def paylasim_bilgisi_goster(bilgi) -> None:
     print(f"\n[{bilgi['ad']}]")
     print(f"Bağlantı yolu: {bilgi['yol']}")
     print(f"Açıklama: {bilgi['aciklama']}")
-    print("Durum: Bağlantı bilgisi gösterildi. Gerçek bağlantı kurulmadı. (simülasyon)\n")
+    print("Durum: Bağlantı bilgisi gösterildi. Gerçek bağlantı kurulmadı.\n")
 
 
-def tum_paylasimlari_goster() -> None:
+def tum_paylasimlari_goster(paylasimlar) -> None:
     print("\n[Tüm Paylaşım Alanları]")
-    for kod, bilgi in PAYLASIM_ALANLARI.items():
-        print(f"{kod} - {bilgi['ad']}")
+
+    for sira, bilgi in enumerate(paylasimlar, start=1):
+        print(f"{sira} - {bilgi['ad']}")
         print(f"    Yol: {bilgi['yol']}")
         print(f"    Açıklama: {bilgi['aciklama']}")
+
     print()
 
 
 def ana_program() -> None:
+    paylasimlar = paylasimlari_yukle()
+
+    if not paylasimlar:
+        print("Paylaşım alanı bulunamadı. Program sonlandırılıyor.")
+        return
+
     baslik_yaz()
 
     while True:
-        menu_goster()
+        menu_goster(paylasimlar)
+
         secim = input("Seçiminiz: ").strip()
 
-        if secim in PAYLASIM_ALANLARI:
-            paylasim_bilgisi_goster(secim)
-        elif secim == "5":
-            tum_paylasimlari_goster()
-        elif secim == "6":
+        if not secim.isdigit():
+            print("\nLütfen sayı giriniz.\n")
+            continue
+
+        secim_no = int(secim)
+
+        if 1 <= secim_no <= len(paylasimlar):
+            paylasim_bilgisi_goster(paylasimlar[secim_no - 1])
+
+        elif secim_no == len(paylasimlar) + 1:
+            tum_paylasimlari_goster(paylasimlar)
+
+        elif secim_no == len(paylasimlar) + 2:
             print("\nDosya paylaşım yardımcısı kapatıldı.")
             break
+
         else:
             print("\nGeçersiz seçim yaptınız. Lütfen tekrar deneyin.\n")
 
